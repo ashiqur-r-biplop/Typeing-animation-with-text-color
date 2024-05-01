@@ -1,48 +1,57 @@
-function startTypingAnimation(
-  text,
-  containerId,
-  speed = 100,
-  delay = 1000,
-  callback
-) {
-  const colorMap = {
-    "ARE YOU": "white",
-    "regularly": "red",
-    "injured": "blue",
-    "mind": "green",
-    "yaap": "yellow"
-  };
-  let index = 0;
-  const container = document.getElementById(containerId);
-  container.innerHTML = ""; // Clear container
-  function render() {
-    if (index < text.length) {
-      const span = document.createElement("span");
-      const word = text.substring(index, index + 7); // Check for each word
-      span.textContent = word;
-      span.style.color = colorMap[word];
-      container.appendChild(span);
+const sentence = "is Ahsiqur Rahman Biplop.";
+let charIndex = 0;
+let wordIndex = 0;
+const typingText = document.getElementById("typing-text");
 
-      index += word.length;
-      setTimeout(render, speed);
-    } else {
-      setTimeout(callback, delay);
+function type() {
+  if (charIndex < sentence.length) {
+    const char = sentence.charAt(charIndex);
+    const span = document.createElement("span");
+
+    span.textContent = char;
+
+    if (char === " " || charIndex === sentence.length - 1) {
+      wordIndex++;
     }
+
+    switch (wordIndex) {
+      case 0:
+        span.style.color = "#fcba03"; 
+        break;
+      case 1:
+        span.style.color = "#fc03ec"; 
+        break;
+      case 2:
+        span.style.color = "#2c03fc";
+        break;
+      case 3:
+        span.style.color = "#03fc35"; 
+        break;
+    }
+
+    typingText.appendChild(span);
+
+    charIndex++;
+    setTimeout(type, 100);
+  } else {
+    setTimeout(erase, 1000);
   }
-  render();
 }
 
-// Usage
-const textToType = "ARE YOU regularly injured mind yaap";
-
-function startAnimations() {
-  startTypingAnimation(
-    textToType,
-    "text-container",
-    100,
-    2000,
-    startAnimations
-  );
+function erase() {
+  const spanElements = typingText.querySelectorAll("span");
+  if (spanElements.length > 0) {
+    const lastSpan = spanElements[spanElements.length - 1];
+    lastSpan.parentNode.removeChild(lastSpan);
+    charIndex--;
+    if (charIndex === 0) {
+      wordIndex = 0;
+    }
+    setTimeout(erase, 100);
+  } else {
+    charIndex = 0;
+    setTimeout(type, 500);
+  }
 }
 
-startAnimations();
+setTimeout(type, 500);
